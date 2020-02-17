@@ -1,0 +1,9 @@
+{
+  "appId": "com.charppi.ToFaceTime",
+  "appName": "2FaceTime",
+  "bundledWebRuntime": false,
+  "npmClient": "npm",
+  "webDir": "build",
+  "cordova": {},
+  "linuxAndroidStudioPath": "/opt/android-studio/bin/studio.sh"
+}
