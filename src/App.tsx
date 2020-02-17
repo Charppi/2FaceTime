@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Redirect, Route } from "react-router-dom";
 import { IonApp, IonRouterOutlet } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
@@ -28,23 +28,33 @@ import SignUp from "./pages/SignUp";
 
 //Configuracion de firebase
 import * as firebase from "firebase/app";
+import 'firebase/auth';
 import { firebaseConfig } from "./env";
 firebase.initializeApp(firebaseConfig);
 //Configuracion de firebase
 
+const auth = firebase.auth
 
-
-const App: React.FC = () => (
-  <IonApp>
-    <IonReactRouter>
-      <IonRouterOutlet>
-        <Route path="/home" component={Home} exact={true} />
-        <Route path="/signIn" component={SignIn} exact={true} />
-        <Route path="/signUp" component={SignUp} exact={true} />
-        <Route exact path="/" render={() => <Redirect to="/home" />} />
-      </IonRouterOutlet>
-    </IonReactRouter>
-  </IonApp>
-);
+const App: React.FC = () => {
+  const [isLoged, setIsLoged] = useState(false);
+  useEffect(() => {
+    auth().onAuthStateChanged(user => {
+      setIsLoged(user ? true : false);
+    });
+    console.log(isLoged);
+  }, [isLoged]);
+  return (
+    <IonApp>
+      <IonReactRouter>
+        <IonRouterOutlet>
+          <Route path="/home" component={Home} exact={true} />
+          <Route path="/signIn" component={SignIn} exact={true} />
+          <Route path="/signUp" component={SignUp} exact={true} />
+          <Route exact path="/" render={() => <Redirect to="/home" />} />
+        </IonRouterOutlet>
+      </IonReactRouter>
+    </IonApp>
+  );
+};
 
 export default App;
