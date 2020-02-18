@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   IonPage,
   IonContent,
@@ -6,45 +6,77 @@ import {
   IonItem,
   IonLabel,
   IonInput,
-  IonIcon
+  IonIcon,
+  IonLoading
 } from "@ionic/react";
 
-import {logoGoogle,logoFacebook} from 'ionicons/icons'
+import { logoGoogle, logoFacebook } from 'ionicons/icons'
+import withFirebaseAuth, { WrappedComponentProps } from 'react-with-firebase-auth';
 
-const SignIn: React.FC = () => (
-  <IonPage>
-    <IonContent className="main-background ion-padding">
-      <IonItem className="transparent-background">
-        <IonLabel color="white" className="title">
-          Correo:
+import firebaseApp, { googleProvider } from '../services/firebase';
+import { useHistory } from "react-router";
+const SignIn = ({
+  /** These props are provided by withFirebaseAuth HOC */
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signInWithGoogle,
+  signInWithFacebook,
+}: WrappedComponentProps) => {
+  const [showLoading, setShowLoading] = useState(false);
+  const history = useHistory()
+  return (
+    <IonPage>
+      <IonContent className="main-background ion-padding">
+        <IonItem className="transparent-background">
+          <IonLabel color="white" className="title">
+            Correo:
         </IonLabel>
-        <IonInput color="white" type="email" />
-      </IonItem>
-      <IonItem className="transparent-background">
-        <IonLabel color="white" className="title">
-          Contraseña:
+          <IonInput color="white" type="email" />
+        </IonItem>
+        <IonItem className="transparent-background">
+          <IonLabel color="white" className="title">
+            Contraseña:
         </IonLabel>
-        <IonInput color="white" type="password" />
-      </IonItem>
-      <IonButton className="ion-padding" color="tertiary" expand="block">
-        Iniciar sesion
+          <IonInput color="white" type="password" />
+        </IonItem>
+        <IonButton className="ion-padding" color="tertiary" expand="block">
+          Iniciar sesion
       </IonButton>
-      <IonButton className="ion-padding" color="dark" expand="block">
-        Registrarme
+        <IonButton className="ion-padding" color="dark" expand="block">
+          Registrarme
       </IonButton>
-      <IonButton className="ion-padding" color="orange" expand="block">
-      <IonIcon slot="end" icon={logoGoogle} />
-        Iniciar sesion con google
+        <IonButton onClick={() => {
+          setShowLoading(true);
+          signInWithGoogle();
+        }} className="ion-padding" color="orange" expand="block">
+          <IonIcon slot="end" icon={logoGoogle} />
+          Iniciar sesion con google
       </IonButton>
-      <IonButton className="ion-padding" expand="block">
-      <IonIcon slot="end" icon={logoFacebook} />
-        Iniciar sesion con facebook
+        <IonButton onClick={signInWithFacebook} className="ion-padding" expand="block">
+          <IonIcon slot="end" icon={logoFacebook} />
+          Iniciar sesion con facebook
       </IonButton>
-      <IonButton className="ion-padding" color="default" expand="block">
-        Olvidé mi contraseña
+        <IonButton className="ion-padding" color="default" expand="block">
+          Olvidé mi contraseña
       </IonButton>
-    </IonContent>
-  </IonPage>
-);
+        <IonLoading
+          isOpen={showLoading}
+          onDidDismiss={() => setShowLoading(false)}
+          message={'Por favor espere...'}
+          duration={15000}
+        />
+      </IonContent>
+    </IonPage>
+  )
+};
 
-export default SignIn;
+const providers = {
+  googleProvider
+};
+
+const firebaseAppAuth = firebaseApp.auth()
+
+export default withFirebaseAuth({
+  providers,
+  firebaseAppAuth,
+})(SignIn);

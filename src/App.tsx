@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Redirect, Route } from "react-router-dom";
-import { IonApp, IonRouterOutlet } from "@ionic/react";
+import { IonApp, IonRouterOutlet, IonLoading } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
 import Home from "./pages/Home";
 
@@ -27,32 +27,40 @@ import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 
 //Configuracion de firebase
-import * as firebase from "firebase/app";
-import 'firebase/auth';
-import { firebaseConfig } from "./env";
-firebase.initializeApp(firebaseConfig);
+import firebaseApp from './services/firebase'
+import AuthenticatedRoutes from "./components/AuthenticatedRoutes";
+import UnauthenticatedRoutes from "./components/UnauthenticatedRoutes";
 //Configuracion de firebase
 
-const auth = firebase.auth
 
 const App: React.FC = () => {
   const [isLoged, setIsLoged] = useState(false);
+  const [isBusy, setIsBusy] = useState(true);
   useEffect(() => {
-    auth().onAuthStateChanged(user => {
+    firebaseApp.auth().onAuthStateChanged(user => {
       setIsLoged(user ? true : false);
+      setIsBusy(false);
+      console.log(isLoged);
     });
-    console.log(isLoged);
   }, [isLoged]);
   return (
     <IonApp>
-      <IonReactRouter>
-        <IonRouterOutlet>
-          <Route path="/home" component={Home} exact={true} />
-          <Route path="/signIn" component={SignIn} exact={true} />
-          <Route path="/signUp" component={SignUp} exact={true} />
-          <Route exact path="/" render={() => <Redirect to="/home" />} />
-        </IonRouterOutlet>
-      </IonReactRouter>
+      {isBusy
+        ? <IonLoading
+          isOpen={isBusy}
+          onDidDismiss={() => setIsBusy(false)}
+          message={'Por favor espere...'}
+        />
+        : <IonReactRouter>
+          <IonRouterOutlet>
+            <Route path="/home" render={() => (isLoged ? <Home /> : <Redirect to="/signIn" />)} exact={true} />
+            <Route path="/signIn" render={() => (isLoged ? <SignIn /> : <Redirect to="/home" />)} exact={true} />
+            <Route path="/signUp" render={() => (isLoged ? <SignUp /> : <Redirect to="/home" />)} exact={true} />
+            <Route exact path="/" render={() => <Redirect to="/signIn" />} />
+          </IonRouterOutlet>
+        </IonReactRouter>
+      }
+
     </IonApp>
   );
 };
