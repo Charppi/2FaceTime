@@ -28,8 +28,6 @@ import SignUp from "./pages/SignUp";
 
 //Configuracion de firebase
 import firebaseApp from './services/firebase'
-import AuthenticatedRoutes from "./components/AuthenticatedRoutes";
-import UnauthenticatedRoutes from "./components/UnauthenticatedRoutes";
 //Configuracion de firebase
 
 
@@ -40,9 +38,8 @@ const App: React.FC = () => {
     firebaseApp.auth().onAuthStateChanged(user => {
       setIsLoged(user ? true : false);
       setIsBusy(false);
-      console.log(isLoged);
     });
-  }, [isLoged]);
+  }, []);
   return (
     <IonApp>
       {isBusy
@@ -53,9 +50,9 @@ const App: React.FC = () => {
         />
         : <IonReactRouter>
           <IonRouterOutlet>
-            <Route path="/home" render={() => (isLoged ? <Home /> : <Redirect to="/signIn" />)} exact={true} />
-            <Route path="/signIn" render={() => (isLoged ? <SignIn /> : <Redirect to="/home" />)} exact={true} />
-            <Route path="/signUp" render={() => (isLoged ? <SignUp /> : <Redirect to="/home" />)} exact={true} />
+            <Route path="/home" exact={true} render={() => (isLoged ? <Home /> : <Redirect to="/signIn" />)} />
+            <Route path="/signIn" exact={true} render={() => (isLoged ? <Redirect to="/home" /> : <SignIn />)} />
+            <Route path="/signUp" exact={true} render={() => (isLoged ? <Redirect to="/home" /> : <SignUp />)} />
             <Route exact path="/" render={() => <Redirect to="/signIn" />} />
           </IonRouterOutlet>
         </IonReactRouter>

@@ -1,0 +1,11 @@
+import React from 'react';
+
+const MapView = () => {
+    return (
+        <h1>
+            Soy el MapView
+        </h1>
+    )
+}
+
+export default MapView
