@@ -13,7 +13,7 @@ import {
 import { logoGoogle, logoFacebook } from 'ionicons/icons'
 import withFirebaseAuth, { WrappedComponentProps } from 'react-with-firebase-auth';
 
-import firebaseApp, { googleProvider } from '../services/firebase';
+import firebaseApp, { googleProvider, facebookProvider } from '../services/firebase';
 import { useHistory } from "react-router";
 const SignIn = ({
   /** These props are provided by withFirebaseAuth HOC */
@@ -71,7 +71,8 @@ const SignIn = ({
 };
 
 const providers = {
-  googleProvider
+  googleProvider,
+  facebookProvider
 };
 
 const firebaseAppAuth = firebaseApp.auth()
